@@ -37,6 +37,52 @@ typedef struct node2 {
 } Node2;
 
 // Funções
+
+void Vender_oculos_sol(Node2 *lista2){
+    int codigo;
+    Node2 *aux = lista2;
+    printf("Digite o código do oculos de sol: ");
+    scanf("%d", &codigo);
+    while (aux != NULL) {
+        if (aux->oculos_sol.codigo == codigo) {
+            if(aux->oculos_sol.quantidade > 0){
+                printf("Venda realizada com sucesso\n");
+                aux->oculos_sol.quantidade -= 1;
+                return;
+            }
+            else{
+                printf("Não há oculos suficiente no estoque\n");
+                return;
+            }
+        }
+        aux = aux->proximo;
+    }
+    printf("Código não encontrado\n");
+}
+
+void Vender_oculos_ver(Node *lista) {
+    int codigo;
+    Node *aux = lista;
+    printf("Digite o código do oculos de ver: ");
+    scanf("%d", &codigo);
+    while (aux != NULL) {
+        if (aux->oculos_ver.codigo == codigo) {
+            if(aux->oculos_ver.quantidade > 0){
+                printf("Venda realizada com sucesso\n");
+                aux->oculos_ver.quantidade -= 1;
+                return;
+            }
+            else{
+                printf("Não há oculos suficiente no estoque\n");
+                return;
+            }
+        }
+        aux = aux->proximo;
+    }
+    printf("Código não encontrado\n");
+}
+
+
 void listar_oculos_sol(Node2 *lista2){
     Node2 *aux = lista2;
     while(aux != NULL){
@@ -202,7 +248,6 @@ void inserir_oculos_sol(Node2 **lista2, Oculos_sol oculos_sol) {
     }
 }
 
-
 int codigo_ja_existe(Node *lista, int novo_codigo) {
     Node *aux = lista;
     while (aux != NULL) {
@@ -265,7 +310,35 @@ void inserir_oculos_ver(Node **lista, Oculos_ver oculos_ver) {
     }
 }
 
-//Menu
+//Menus
+
+void menu_consultar(int *opcao){
+    printf("                            1 - Consultar oculos de ver\n");
+    printf("                            2 - Consultar oculos de sol\n");
+    printf("                            3 - Consultar vendas do dia\n");
+    printf("                            4 - Consultar vendas do mês\n");
+    printf("                            5 - Consultar vendas do ano\n");
+    printf("                            6 - Consultar vendas por data\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
+
+void menu_vender(int *opcao){
+    printf("                            1 - Vender oculos de ver\n");
+    printf("                            2 - Vender oculos de sol\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
+
+void menu_vendas(int *opcao){
+    printf("                            1 - Vender oculos \n");
+    printf("                            2 - Consultar vendas\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
 
 void menu_listar(int *opcao){
     printf("                            1 - Listar oculos de ver\n");
@@ -354,6 +427,7 @@ int main() {
                         oculos_sol(&newOculos);
                         inserir_oculos_sol(&lista2, newOculos);
                     }
+                    break;
                     
                     default:
                         break;
@@ -375,7 +449,27 @@ int main() {
                 }
                 break;
             case 5:
-                // Implemente a funcionalidade de vendas
+                menu_vendas(&opcao);
+                switch (opcao)
+                {
+                    case 1:
+                        menu_vender(&opcao);
+                        switch (opcao)
+                        {
+                            case 1:
+                                Vender_oculos_ver(lista);
+                                break;
+                            case 2:
+                                Vender_oculos_sol(lista2);  
+                                    break;
+                        }
+                        break;
+                    case 2:
+                        menu_consultar(&opcao);
+                        break;                
+                    default:
+                        break;
+                }
                 break;
             case 6:
                 // Implemente a funcionalidade de exclusão
