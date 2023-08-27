@@ -30,15 +30,38 @@ typedef struct node {
 } Node;
 
 //uso de listas duplamente ligadas
-typedef struct node {
+typedef struct node2 {
     Oculos_sol oculos_sol;
-    struct node *proximo;
-    struct node *anterior;
+    struct node2 *proximo;
+    struct node2 *anterior;
 } Node2;
 
 // Funções
+void listar_oculos_sol(Node2 *lista2){
+    Node2 *aux = lista2;
+    while(aux != NULL){
+        printf("#####################################\n");
+        printf("Código: %d\n", aux->oculos_sol.codigo);
+        printf("Marca: %s\n", aux->oculos_sol.marca);
+        printf("Preço: %.2f\n", aux->oculos_sol.preco);
+        printf("Quantidade: %d\n", aux->oculos_sol.quantidade);
+        aux = aux->proximo;
+    }
+}
 
-void listar_codigos_por_marcas(int opcao, Node2 *lista2) {
+void listar_oculos_ver(Node *lista){
+    Node *aux = lista;
+    while(aux != NULL){
+        printf("#####################################\n");
+        printf("Código: %d\n", aux->oculos_ver.codigo);
+        printf("Marca: %s\n", aux->oculos_ver.marca);
+        printf("Preço: %.2f\n", aux->oculos_ver.preco);
+        printf("Quantidade: %d\n", aux->oculos_ver.quantidade);
+        aux = aux->proximo;
+    }
+}
+
+void listar_codigos_por_marcas_sol(int opcao, Node2 *lista2) {
     Node2 *aux = lista2;
     while (aux != NULL) {
         if(opcao == 1){
@@ -116,16 +139,69 @@ void listar_codigos_por_marcas(int opcao, Node *lista) {
     }
 }
 
-void listar_oculos_ver(Node *lista) {
-    Node *aux = lista;
+int codigo_ja_existe2(Node2 *lista2, int novo_codigo) {
+    Node2 *aux = lista2;
     while (aux != NULL) {
-        printf("Código: %d\n", aux->oculos_ver.codigo);
-        printf("Marca: %s\n", aux->oculos_ver.marca);
-        printf("Preço: %.2f\n", aux->oculos_ver.preco);
-        printf("Quantidade: %d\n", aux->oculos_ver.quantidade);
+        if (aux->oculos_sol.codigo == novo_codigo) {
+            return 1; 
+        }
         aux = aux->proximo;
     }
+    return 0; 
 }
+
+
+void oculos_sol(Oculos_sol *oculos_sol) {
+    printf("Digite o código do oculos de ver: ");
+    scanf("%d", &oculos_sol->codigo);
+    printf("Digite a marca do oculos de ver: ");
+    scanf("%s", oculos_sol->marca);
+    printf("Digite o preço do oculos de ver: ");
+    scanf("%f", &oculos_sol->preco);
+    printf("Digite a quantidade do oculos de ver: ");
+    scanf("%d", &oculos_sol->quantidade);
+}
+
+void inserir_oculos_sol(Node2 **lista2, Oculos_sol oculos_sol) {
+    if (codigo_ja_existe2(*lista2, oculos_sol.codigo)) {
+        int opcao;
+        printf("Código já existe na lista. Não é possível inserir.\n");
+        printf("Deseja adicionar à mercadoria já existente ou repetir?\n");
+        printf("1 - Adicionar à mercadoria já existente\n");
+        printf("2 - Repetir\n");
+        scanf("%d", &opcao);
+        if (opcao == 1) {
+            Node2 *aux = *lista2;
+            while (aux != NULL) {
+                if (aux->oculos_sol.codigo == oculos_sol.codigo) {
+                    aux->oculos_sol.quantidade += oculos_sol.quantidade;
+                    break;
+                }
+                aux = aux->proximo;
+            }
+        } else {
+            return;
+        }
+    }
+    else{
+        Node2 *novo = (Node2 *) malloc(sizeof(Node2));
+        novo->oculos_sol = oculos_sol;
+        novo->proximo = NULL;
+        novo->anterior = NULL;
+        
+        if (*lista2 == NULL) {
+            *lista2 = novo;
+        } else {
+            Node2 *aux = *lista2;
+            while (aux->proximo != NULL) {
+                aux = aux->proximo;
+            }
+            aux->proximo = novo;
+            novo->anterior = aux;
+        }
+    }
+}
+
 
 int codigo_ja_existe(Node *lista, int novo_codigo) {
     Node *aux = lista;
@@ -137,7 +213,6 @@ int codigo_ja_existe(Node *lista, int novo_codigo) {
     }
     return 0; 
 }
-
 
 void oculos_ver(Oculos_ver *oculos_ver) {
     printf("Digite o código do oculos de ver: ");
@@ -192,6 +267,23 @@ void inserir_oculos_ver(Node **lista, Oculos_ver oculos_ver) {
 
 //Menu
 
+void menu_listar(int *opcao){
+    printf("                            1 - Listar oculos de ver\n");
+    printf("                            2 - Listar oculos de sol\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
+
+void menu_inserir(int *opcao) {
+    printf("                            Bem vindo a loja Multioticas\n");
+    printf("                            1 - Inserir oculos de ver\n");
+    printf("                            2 - Inserir oculos de sol\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
+
 void menu_oculos_sol(int *opcao) {
     printf("                            Escolha a marca\n");
     printf("                            1 - Rayban\n");
@@ -211,15 +303,6 @@ void menu_oculos_ver(int *opcao) {
     printf("                            3 - Gucci\n");
     printf("                            4 - Oakley\n");
     printf("                            5 - Vogue\n");
-    printf("                            0 - Sair\n");
-    printf("                            Digite a opção desejada: ");
-    scanf("%d", opcao);
-}
-
-void menu_inserir(int *opcao) {
-    printf("                            Bem vindo a loja Multioticas\n");
-    printf("                            1 - Inserir oculos de ver\n");
-    printf("                            2 - Inserir oculos de sol\n");
     printf("                            0 - Sair\n");
     printf("                            Digite a opção desejada: ");
     scanf("%d", opcao);
@@ -255,7 +338,7 @@ int main() {
                 break;
             case 2:
                 menu_oculos_sol(&opcao);
-                listar_codigos_por_marcas(opcao, lista2);
+                listar_codigos_por_marcas_sol(opcao, lista2);
                 break;
             case 3:
                 menu_inserir(&opcao);
@@ -266,12 +349,30 @@ int main() {
                         inserir_oculos_ver(&lista, newOculos);
                     }
                     break;
+                    case 2: {
+                        Oculos_sol newOculos;
+                        oculos_sol(&newOculos);
+                        inserir_oculos_sol(&lista2, newOculos);
+                    }
+                    
                     default:
                         break;
                 }
                 break;
             case 4:
-                // Implemente a funcionalidade para listar
+                menu_listar(&opcao);
+                switch (opcao)
+                {
+                    case 1:
+                        listar_oculos_ver(lista);
+                        break;
+                        
+                    case 2:
+                        listar_oculos_sol(lista2);
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 5:
                 // Implemente a funcionalidade de vendas
