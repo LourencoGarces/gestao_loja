@@ -77,6 +77,40 @@ typedef struct node4 {
 } Node4;
 
 // Funções
+void listar_vendas_ano(Node3 *lista3, Node4 *lista4){
+    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
+    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
+    printf("#####################################\n");
+    printf("Vendas do ano %04d\n", ano_atual);
+    printf("#####################################\n");
+    printf("Oculos de ver\n");
+    printf("#####################################\n");
+    Node3 *aux3 = lista3;
+    while (aux3 != NULL) {
+        if (aux3->venda_ver.ano == ano_atual) {
+            printf("Código: %d\n", aux3->venda_ver.codigo);
+            printf("Marca: %s\n", aux3->venda_ver.marca);
+            printf("Preço: %.2f\n", aux3->venda_ver.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
+            printf("\n");
+        }
+        aux3 = aux3->proximo;
+    }
+    printf("Oculos de sol\n");
+    printf("#####################################\n");
+    Node4 *aux4 = lista4;
+    while (aux4 != NULL) {
+        if (aux4->venda_sol.ano == ano_atual) {
+            printf("Código: %d\n", aux4->venda_sol.codigo);
+            printf("Marca: %s\n", aux4->venda_sol.marca);
+            printf("Preço: %.2f\n", aux4->venda_sol.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
+            printf("\n");
+        }
+        aux4 = aux4->proximo;
+    }
+    printf("#####################################\n");
+}
 
 void listar_vendas_mes(Node3 *lista3, Node4 *lista4){
     int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
@@ -696,6 +730,9 @@ int main() {
                                 break;        
                             case 4:
                                 listar_vendas_mes(lista3, lista4);
+                                break;
+                            case 5:
+                                listar_vendas_ano(lista3, lista4);
                                 break;
                             default:
                                 break;
