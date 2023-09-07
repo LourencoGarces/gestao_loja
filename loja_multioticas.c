@@ -57,7 +57,6 @@ typedef struct node {
     struct node *anterior;
 } Node;
 
-//uso de listas duplamente ligadas
 typedef struct node2 {
     Oculos_sol oculos_sol;
     struct node2 *proximo;
@@ -77,6 +76,95 @@ typedef struct node4 {
 } Node4;
 
 // Funções
+
+void excluir_oculos_sol(Node2 **lista2){
+    Node2 *aux = *lista2;
+    int codigo;
+    printf("#####################################\n");
+    printf("Oculos de sol a excluir da loja:\n");
+    scanf("%d", &codigo);
+    while(aux != NULL){
+        if(aux->oculos_sol.codigo == codigo){
+            if (aux->anterior == NULL) {
+                *lista2 = aux->proximo;
+            } else {
+                aux->anterior->proximo = aux->proximo;
+            }
+            if (aux->proximo != NULL) {
+                aux->proximo->anterior = aux->anterior;
+            }
+            free(aux);
+            printf("O oculo foi removido com sucesso!\n");
+            return;
+        }
+        aux = aux->proximo;
+    }
+    printf("Código não encontrado\n");
+}
+
+void excluir_oculos_ver(Node **lista){
+    Node *aux = *lista;
+    int codigo;
+    printf("#####################################\n");
+    printf("Oculos de ver a excluir da loja:\n");
+    scanf("%d", &codigo);
+    while(aux != NULL){
+        if(aux->oculos_ver.codigo == codigo){
+            if (aux->anterior == NULL) {
+			    *lista = aux->proximo;
+            } else {
+                aux->anterior->proximo = aux->proximo;
+            }
+            if (aux->proximo != NULL) {
+                aux->proximo->anterior = aux->anterior;
+            }
+            free(aux);
+            printf("O oculo foi removido com sucesso!\n");
+            return;
+        }
+        aux = aux->proximo;
+    }
+    printf("Código não encontrado\n");
+}
+
+void listar_vendas_data(Node3 *lista3, Node4 *lista4){
+    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
+    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
+    int dia, mes, ano;
+    printf("Digite a data da venda: ");
+    scanf("%d/%d/%d", &dia, &mes, &ano);
+    printf("#####################################\n");
+    printf("Vendas do dia %02d/%02d/%04d\n", dia, mes, ano);
+    printf("#####################################\n");
+    printf("Oculos de ver\n");
+    printf("#####################################\n");
+    Node3 *aux3 = lista3;
+    while (aux3 != NULL) {
+        if (aux3->venda_ver.ano == ano && aux3->venda_ver.mes == mes && aux3->venda_ver.dia == dia) {
+            printf("Código: %d\n", aux3->venda_ver.codigo);
+            printf("Marca: %s\n", aux3->venda_ver.marca);
+            printf("Preço: %.2f\n", aux3->venda_ver.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
+            printf("\n");
+        }
+        aux3 = aux3->proximo;
+    }
+    printf("Oculos de sol\n");
+    printf("#####################################\n");
+    Node4 *aux4 = lista4;
+    while (aux4 != NULL) {
+        if (aux4->venda_sol.ano == ano && aux4->venda_sol.mes == mes && aux4->venda_sol.dia == dia) {
+            printf("Código: %d\n", aux4->venda_sol.codigo);
+            printf("Marca: %s\n", aux4->venda_sol.marca);
+            printf("Preço: %.2f\n", aux4->venda_sol.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
+            printf("\n");
+        }
+        aux4 = aux4->proximo;
+    }
+    printf("#####################################\n");    
+}
+
 void listar_vendas_ano(Node3 *lista3, Node4 *lista4){
     int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
     horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
@@ -552,8 +640,15 @@ void horas_atuais(int *dia, int *mes, int *ano, int *hora, int *minutos, int *se
     
 }
 
-
 //Menus
+void menu_excluir(int *opcao){
+    printf("                            1 - Excluir oculos de ver\n");
+    printf("                            2 - Excluir oculos de sol\n");
+    printf("                            3 - Venda\n");
+    printf("                            0 - Sair\n");
+    printf("                            Digite a opção desejada: ");
+    scanf("%d", opcao);
+}
 
 void menu_consultar(int *opcao){
     printf("                            1 - Consultar oculos de ver\n");
@@ -645,11 +740,10 @@ int main() {
     Node3 *lista3 = NULL;
     Node4 *lista4 = NULL;
     
-    int opcao = -1;  // Defina um valor inicial diferente de 0 para entrar no loop
+    int opcao = 1;  // Defina um valor inicial diferente de 0 para entrar no loop
 
-    while (opcao != 0) {  // O loop continuará até que o usuário escolha sair (opção 0)
+    while (opcao != -1) {  // O loop continuará até que o usuário escolha sair (opção 0)
         menu(&opcao);
-
         switch (opcao) {
             case 1:
                 menu_oculos_ver(&opcao);
@@ -674,7 +768,8 @@ int main() {
                         inserir_oculos_sol(&lista2, newOculos);
                     }
                     break;
-                    
+                    case 0:
+                        break;                    
                     default:
                         break;
                 }
@@ -689,6 +784,8 @@ int main() {
                         
                     case 2:
                         listar_oculos_sol(lista2);
+                        break;
+                    case 0:
                         break;
                     default:
                         break;
@@ -711,6 +808,8 @@ int main() {
                                 Venda_sol venda2;
                                 Vender_oculos_sol(lista2, &lista4, venda2);  
                             }
+                            case 0:
+                                break;
                             default:
                                 break;
                         }
@@ -734,17 +833,39 @@ int main() {
                             case 5:
                                 listar_vendas_ano(lista3, lista4);
                                 break;
+                            case 6:
+                                listar_vendas_data(lista3, lista4);
+                                break;
+                            case 0:
+                                break;
                             default:
                                 break;
-                            }
-                        
-                        break;       
+                            }                        
+                        break;     
+                    case 0:
+                        break;  
                     default:
                         break;
                 }
                 break;
             case 6:
-                // Implemente a funcionalidade de exclusão
+                menu_excluir(&opcao);
+                switch (opcao)
+                {
+                    case 1:
+                        excluir_oculos_ver(&lista);
+                        break;
+                    case 2:
+                        excluir_oculos_sol(&lista2);
+                        break;
+                    case 3:
+                        //excluir_venda(&lista3, &lista4);
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 7:
                 // Implemente a funcionalidade de ficha de cliente
