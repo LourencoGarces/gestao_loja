@@ -78,6 +78,46 @@ typedef struct node4 {
 
 // Funções
 
+void listar_vendas_dia(Node3 *lista3, Node4 *lista4) {
+    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
+    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
+
+    printf("#####################################\n");
+    printf("Vendas do dia %02d/%02d/%04d\n", dia_atual, mes_atual, ano_atual);
+    printf("#####################################\n");
+    printf("Oculos de ver\n");
+    printf("#####################################\n");
+
+    Node3 *aux3 = lista3;
+    while (aux3 != NULL) {
+        if (aux3->venda_ver.ano == ano_atual && aux3->venda_ver.mes == mes_atual && aux3->venda_ver.dia == dia_atual) {
+            printf("Código: %d\n", aux3->venda_ver.codigo);
+            printf("Marca: %s\n", aux3->venda_ver.marca);
+            printf("Preço: %.2f\n", aux3->venda_ver.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
+            printf("\n");
+        }
+        aux3 = aux3->proximo;
+    }
+
+    printf("Oculos de sol\n");
+    printf("#####################################\n");
+
+    Node4 *aux4 = lista4;
+    while (aux4 != NULL) {
+        if (aux4->venda_sol.ano == ano_atual && aux4->venda_sol.mes == mes_atual && aux4->venda_sol.dia == dia_atual) {
+            printf("Código: %d\n", aux4->venda_sol.codigo);
+            printf("Marca: %s\n", aux4->venda_sol.marca);
+            printf("Preço: %.2f\n", aux4->venda_sol.preco);
+            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
+            printf("\n");
+        }
+        aux4 = aux4->proximo;
+    }
+
+    printf("#####################################\n");
+}
+
 void listar_vendas_sol(Node4 *lista4) {
     Node4 *aux = lista4;
     while (aux != NULL) {
@@ -112,8 +152,9 @@ void listar_vendas_ver(Node3 *lista3) {
     
 }
 
-void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol, int dia, int mes, int ano, int hora, int minutos, int segundos) {
+void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol) {
     int codigo;
+    int dia, mes, ano, hora, minutos, segundos;
     Node2 *aux = lista2;
     printf("Digite o código do oculos de ver: ");
     scanf("%d", &codigo);
@@ -126,6 +167,7 @@ void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol, int d
                     printf("Erro ao alocar memória para Node3\n");
                     return;
                 }
+                horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
                 novo->venda_sol = venda_sol;
                 novo->venda_sol.dia = dia;  
                 novo->venda_sol.mes = mes;
@@ -157,8 +199,9 @@ void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol, int d
     printf("Código não encontrado\n");
 }
 
-void Vender_oculos_ver(Node *lista, Node3 **lista3, Venda_ver venda_ver, int dia, int mes, int ano, int hora, int minutos, int segundos) {
+void Vender_oculos_ver(Node *lista, Node3 **lista3, Venda_ver venda_ver) {
     int codigo;
+    int dia, mes, ano, hora, minutos, segundos;
     Node *aux = lista;
     printf("Digite o código do oculos de ver: ");
     scanf("%d", &codigo);
@@ -171,6 +214,7 @@ void Vender_oculos_ver(Node *lista, Node3 **lista3, Venda_ver venda_ver, int dia
                     printf("Erro ao alocar memória para Node3\n");
                     return;
                 }
+                horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
                 novo->venda_ver = venda_ver;
                 novo->venda_ver.dia = dia;  
                 novo->venda_ver.mes = mes;
@@ -315,7 +359,6 @@ int codigo_ja_existe2(Node2 *lista2, int novo_codigo) {
     return 0; 
 }
 
-
 void oculos_sol(Oculos_sol *oculos_sol) {
     printf("Digite o código do oculos de ver: ");
     scanf("%d", &oculos_sol->codigo);
@@ -429,6 +472,23 @@ void inserir_oculos_ver(Node **lista, Oculos_ver oculos_ver) {
     }
 }
 
+void horas_atuais(int *dia, int *mes, int *ano, int *hora, int *minutos, int *segundos) {
+    
+        time_t currentTime;
+        struct tm *localTime;
+        currentTime = time(NULL);
+        localTime = localtime(&currentTime);
+
+        *ano = localTime->tm_year + 1900;
+        *mes = localTime->tm_mon + 1;
+        *dia = localTime->tm_mday;
+        *hora = localTime->tm_hour;
+        *minutos = localTime->tm_min;
+        *segundos = localTime->tm_sec;
+    
+}
+
+
 //Menus
 
 void menu_consultar(int *opcao){
@@ -514,24 +574,13 @@ void menu(int *opcao) {
     scanf("%d", opcao);
 }
 
-int main() {
-    time_t currentTime;
-    struct tm *localTime;
+int main() {    
     setlocale(LC_ALL, "");
     Node *lista = NULL;
     Node2 *lista2 = NULL;
     Node3 *lista3 = NULL;
     Node4 *lista4 = NULL;
-    currentTime = time(NULL);
-    localTime = localtime(&currentTime);
-
-    int ano = localTime->tm_year + 1900;
-    int mes = localTime->tm_mon + 1;
-    int dia = localTime->tm_mday;
-    int hora = localTime->tm_hour;
-    int minutos = localTime->tm_min;
-    int segundos = localTime->tm_sec;
-
+    
     int opcao = -1;  // Defina um valor inicial diferente de 0 para entrar no loop
 
     while (opcao != 0) {  // O loop continuará até que o usuário escolha sair (opção 0)
@@ -591,25 +640,35 @@ int main() {
                         {
                             case 1:{
                                 Venda_ver venda;
-                                Vender_oculos_ver(lista, &lista3, venda, dia, mes, ano, hora, minutos, segundos);
+                                Vender_oculos_ver(lista, &lista3, venda);
                             }
                                 break;
                             case 2:{
                                 Venda_sol venda2;
-                                Vender_oculos_sol(lista2, &lista4, venda2, dia, mes, ano, hora, minutos, segundos);  
+                                Vender_oculos_sol(lista2, &lista4, venda2);  
                             }
                             default:
                                 break;
                         }
                         break;
                     case 2:
-                        //menu_consultar(&opcao);
-                        listar_vendas_ver(lista3);
-                        break;                
-                    case 3:
-                        //menu_consultar(&opcao);
-                        listar_vendas_sol(lista4);
-                        break;
+                        menu_consultar(&opcao);
+                            switch (opcao)
+                            {
+                            case 1:
+                                listar_vendas_ver(lista3);
+                                break;
+                            case 2:
+                                listar_vendas_sol(lista4);
+                                break;                    
+                            case 3:
+                                listar_vendas_dia(lista3, lista4);
+                                break;        
+                            default:
+                                break;
+                            }
+                        
+                        break;       
                     default:
                         break;
                 }
