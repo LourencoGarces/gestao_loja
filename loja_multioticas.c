@@ -6,21 +6,14 @@
 
 // Estrutura de dados
 
-typedef struct  {
+typedef struct {
     int id;
     int codigo;
     char marca[50];
     float preco;
     int quantidade;
-} Oculos_ver;
-
-typedef struct  {
-    int id;
-    int codigo;
-    char marca[50];
-    float preco;
-    int quantidade;
-} Oculos_sol;
+    int tipo; 
+} Oculos;
 
 typedef struct {
     int id;
@@ -33,342 +26,128 @@ typedef struct {
     int hora;
     int minutos;
     int segundos;
-} Venda_ver;
+    int tipo; 
+} Venda;
 
-typedef struct {
-    int id;
-    int codigo;
-    char marca[50];
-    float preco;
-    int dia;
-    int mes;
-    int ano;
-    int hora;
-    int minutos;
-    int segundos;
-} Venda_sol;
+// Lista duplamente ligada única para óculos
+typedef struct node_oculos {
+    Oculos oculos;
+    struct node_oculos *proximo;
+    struct node_oculos *anterior;
+} NodeOculos;
 
-//uso de listas duplamente ligadas
-
-typedef struct node {
-    Oculos_ver oculos_ver;
-    struct node *proximo;
-    struct node *anterior;
-} Node;
-
-typedef struct node2 {
-    Oculos_sol oculos_sol;
-    struct node2 *proximo;
-    struct node2 *anterior;
-} Node2;
-
-typedef struct node3 {
-    Venda_ver venda_ver;
-    struct node3 *proximo;
-    struct node3 *anterior;
-} Node3;
-
-typedef struct node4 {
-    Venda_sol venda_sol;
-    struct node4 *proximo;
-    struct node4 *anterior;
-} Node4;
+// Lista duplamente ligada única para vendas
+typedef struct node_venda {
+    Venda venda;
+    struct node_venda *proximo;
+    struct node_venda *anterior;
+} NodeVenda;
 
 // Funções
 void horas_atuais(int *dia, int *mes, int *ano, int *hora, int *minutos, int *segundos) {
-    
-        time_t currentTime;
-        struct tm *localTime;
-        currentTime = time(NULL);
-        localTime = localtime(&currentTime);
+    time_t currentTime;
+    struct tm *localTime;
+    currentTime = time(NULL);
+    localTime = localtime(&currentTime);
 
-        *ano = localTime->tm_year + 1900;
-        *mes = localTime->tm_mon + 1;
-        *dia = localTime->tm_mday;
-        *hora = localTime->tm_hour;
-        *minutos = localTime->tm_min;
-        *segundos = localTime->tm_sec;
-    
+    *ano = localTime->tm_year + 1900;
+    *mes = localTime->tm_mon + 1;
+    *dia = localTime->tm_mday;
+    *hora = localTime->tm_hour;
+    *minutos = localTime->tm_min;
+    *segundos = localTime->tm_sec;
 }
 
-void excluir_oculos_sol(Node2 **lista2){
-    Node2 *aux = *lista2;
-    int codigo;
-    printf("#####################################\n");
-    printf("Oculos de sol a excluir da loja:\n");
-    scanf("%d", &codigo);
-    while(aux != NULL){
-        if(aux->oculos_sol.codigo == codigo){
-            if (aux->anterior == NULL) {
-                *lista2 = aux->proximo;
-            } else {
-                aux->anterior->proximo = aux->proximo;
-            }
-            if (aux->proximo != NULL) {
-                aux->proximo->anterior = aux->anterior;
-            }
-            free(aux);
-            printf("O oculo foi removido com sucesso!\n");
-            return;
-        }
-        aux = aux->proximo;
-    }
-    printf("Código não encontrado\n");
-}
-
-void excluir_oculos_ver(Node **lista){
-    Node *aux = *lista;
-    int codigo;
-    printf("#####################################\n");
-    printf("Oculos de ver a excluir da loja:\n");
-    scanf("%d", &codigo);
-    while(aux != NULL){
-        if(aux->oculos_ver.codigo == codigo){
-            if (aux->anterior == NULL) {
-			    *lista = aux->proximo;
-            } else {
-                aux->anterior->proximo = aux->proximo;
-            }
-            if (aux->proximo != NULL) {
-                aux->proximo->anterior = aux->anterior;
-            }
-            free(aux);
-            printf("O oculo foi removido com sucesso!\n");
-            return;
-        }
-        aux = aux->proximo;
-    }
-    printf("Código não encontrado\n");
-}
-
-void listar_vendas_data(Node3 *lista3, Node4 *lista4){
-    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
-    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
-    int dia, mes, ano;
-    printf("Digite a data da venda: ");
-    scanf("%d/%d/%d", &dia, &mes, &ano);
-    printf("#####################################\n");
-    printf("Vendas do dia %02d/%02d/%04d\n", dia, mes, ano);
-    printf("#####################################\n");
-    printf("Oculos de ver\n");
-    printf("#####################################\n");
-    Node3 *aux3 = lista3;
-    while (aux3 != NULL) {
-        if (aux3->venda_ver.ano == ano && aux3->venda_ver.mes == mes && aux3->venda_ver.dia == dia) {
-            printf("ID: %d\n", aux3->venda_ver.id);
-            printf("Código: %d\n", aux3->venda_ver.codigo);
-            printf("Marca: %s\n", aux3->venda_ver.marca);
-            printf("Preço: %.2f\n", aux3->venda_ver.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
-            printf("\n");
-        }
-        aux3 = aux3->proximo;
-    }
-    printf("Oculos de sol\n");
-    printf("#####################################\n");
-    Node4 *aux4 = lista4;
-    while (aux4 != NULL) {
-        if (aux4->venda_sol.ano == ano && aux4->venda_sol.mes == mes && aux4->venda_sol.dia == dia) {
-            printf("ID: %d\n", aux4->venda_sol.id);
-            printf("Código: %d\n", aux4->venda_sol.codigo);
-            printf("Marca: %s\n", aux4->venda_sol.marca);
-            printf("Preço: %.2f\n", aux4->venda_sol.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
-            printf("\n");
-        }
-        aux4 = aux4->proximo;
-    }
-    printf("#####################################\n");    
-}
-
-void listar_vendas_ano(Node3 *lista3, Node4 *lista4){
-    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
-    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
-    printf("#####################################\n");
-    printf("Vendas do ano %04d\n", ano_atual);
-    printf("#####################################\n");
-    printf("Oculos de ver\n");
-    printf("#####################################\n");
-    Node3 *aux3 = lista3;
-    while (aux3 != NULL) {
-        if (aux3->venda_ver.ano == ano_atual) {
-            printf("ID: %d\n", aux3->venda_ver.id);
-            printf("Código: %d\n", aux3->venda_ver.codigo);
-            printf("Marca: %s\n", aux3->venda_ver.marca);
-            printf("Preço: %.2f\n", aux3->venda_ver.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
-            printf("\n");
-        }
-        aux3 = aux3->proximo;
-    }
-    printf("Oculos de sol\n");
-    printf("#####################################\n");
-    Node4 *aux4 = lista4;
-    while (aux4 != NULL) {
-        if (aux4->venda_sol.ano == ano_atual) {
-            printf("ID: %d\n", aux4->venda_sol.id);
-            printf("Código: %d\n", aux4->venda_sol.codigo);
-            printf("Marca: %s\n", aux4->venda_sol.marca);
-            printf("Preço: %.2f\n", aux4->venda_sol.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
-            printf("\n");
-        }
-        aux4 = aux4->proximo;
-    }
-    printf("#####################################\n");
-}
-
-void listar_vendas_mes(Node3 *lista3, Node4 *lista4){
-    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
-    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
-    printf("#####################################\n");
-    printf("Vendas do mês %02d/%04d\n", mes_atual, ano_atual);
-    printf("#####################################\n");
-    printf("Oculos de ver\n");
-    printf("#####################################\n");
-    Node3 *aux3 = lista3;
-    while (aux3 != NULL) {
-        if (aux3->venda_ver.ano == ano_atual && aux3->venda_ver.mes == mes_atual) {
-            printf("ID: %d\n", aux3->venda_ver.id);
-            printf("Código: %d\n", aux3->venda_ver.codigo);
-            printf("Marca: %s\n", aux3->venda_ver.marca);
-            printf("Preço: %.2f\n", aux3->venda_ver.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
-            printf("\n");
-        }
-        aux3 = aux3->proximo;
-    }
-    printf("Oculos de sol\n");
-    printf("#####################################\n");
-    Node4 *aux4 = lista4;
-    while (aux4 != NULL) {
-        if (aux4->venda_sol.ano == ano_atual && aux4->venda_sol.mes == mes_atual) {
-            printf("ID: %d\n", aux4->venda_sol.id);
-            printf("Código: %d\n", aux4->venda_sol.codigo);
-            printf("Marca: %s\n", aux4->venda_sol.marca);
-            printf("Preço: %.2f\n", aux4->venda_sol.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
-            printf("\n");
-        }
-        aux4 = aux4->proximo;
-    }
-    printf("#####################################\n");
-}
-
-void listar_vendas_dia(Node3 *lista3, Node4 *lista4) {
-    int dia_atual, mes_atual, ano_atual, hora_atual, minutos_atual, segundos_atual;
-    horas_atuais(&dia_atual, &mes_atual, &ano_atual, &hora_atual, &minutos_atual, &segundos_atual);
-    printf("#####################################\n");
-    printf("Vendas do dia %02d/%02d/%04d\n", dia_atual, mes_atual, ano_atual);
-    printf("#####################################\n");
-    printf("Oculos de ver\n");
-    printf("#####################################\n");
-    Node3 *aux3 = lista3;
-    while (aux3 != NULL) {
-        if (aux3->venda_ver.ano == ano_atual && aux3->venda_ver.mes == mes_atual && aux3->venda_ver.dia == dia_atual) {
-            printf("ID: %d\n", aux3->venda_ver.id);
-            printf("Código: %d\n", aux3->venda_ver.codigo);
-            printf("Marca: %s\n", aux3->venda_ver.marca);
-            printf("Preço: %.2f\n", aux3->venda_ver.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux3->venda_ver.ano, aux3->venda_ver.mes, aux3->venda_ver.dia, aux3->venda_ver.hora, aux3->venda_ver.minutos, aux3->venda_ver.segundos);
-            printf("\n");
-        }
-        aux3 = aux3->proximo;
-    }
-    printf("Oculos de sol\n");
-    printf("#####################################\n");
-    Node4 *aux4 = lista4;
-    while (aux4 != NULL) {
-        if (aux4->venda_sol.ano == ano_atual && aux4->venda_sol.mes == mes_atual && aux4->venda_sol.dia == dia_atual) {
-            printf("ID: %d\n", aux4->venda_sol.id);
-            printf("Código: %d\n", aux4->venda_sol.codigo);
-            printf("Marca: %s\n", aux4->venda_sol.marca);
-            printf("Preço: %.2f\n", aux4->venda_sol.preco);
-            printf("Data da venda: %04d-%02d-%02d às %02d:%02d:%02d\n", aux4->venda_sol.ano, aux4->venda_sol.mes, aux4->venda_sol.dia, aux4->venda_sol.hora, aux4->venda_sol.minutos, aux4->venda_sol.segundos);
-            printf("\n");
-        }
-        aux4 = aux4->proximo;
-    }
-    printf("#####################################\n");
-}
-
-void listar_vendas_sol(Node4 *lista4) {
-    Node4 *aux = lista4;
+void listar_vendas_sol(NodeVenda *lista) {
+    NodeVenda *aux = lista;
+    int encontrou = 0; 
     while (aux != NULL) {
-        printf("#####################################\n");
-        printf("ID: %d\n", aux->venda_sol.id);
-        printf("Código: %d\n", aux->venda_sol.codigo);
-        printf("Marca: %s\n", aux->venda_sol.marca);
-        printf("Preço: %.2f\n", aux->venda_sol.preco);
-        printf("Data atual: %04d-%02d-%02d às %02d:%02d:%02d\n", aux->venda_sol.ano, aux->venda_sol.mes, aux->venda_sol.dia, aux->venda_sol.hora, aux->venda_sol.minutos, aux->venda_sol.segundos);
-        printf("\n");
+        if (aux->venda.tipo == 1) { 
+            encontrou = 1; 
+            printf("#####################################\n");
+            printf("Código: %d\n", aux->venda.codigo);
+            printf("Marca: %s\n", aux->venda.marca);
+            printf("Preço: %.2f\n", aux->venda.preco);
+            printf("Data atual: %04d-%02d-%02d às %02d:%02d:%02d\n", aux->venda.ano, aux->venda.mes, aux->venda.dia, aux->venda.hora, aux->venda.minutos, aux->venda.segundos);
+            printf("\n");
+        }
         aux = aux->proximo;
     }
-    if (aux == NULL) {
-        printf("Não há vendas registradas\n");
+    if (!encontrou) {
+        printf("Não há vendas de óculos de ver registradas\n");
     }
-    
 }
 
-void listar_vendas_ver(Node3 *lista3) {
-    Node3 *aux = lista3;
+void listar_vendas_ver(NodeVenda *lista) {
+    NodeVenda *aux = lista;
+    int encontrou = 0; 
     while (aux != NULL) {
-        printf("#####################################\n");
-        printf("ID: %d\n", aux->venda_ver.id);
-        printf("Código: %d\n", aux->venda_ver.codigo);
-        printf("Marca: %s\n", aux->venda_ver.marca);
-        printf("Preço: %.2f\n", aux->venda_ver.preco);
-        printf("Data atual: %04d-%02d-%02d às %02d:%02d:%02d\n", aux->venda_ver.ano, aux->venda_ver.mes, aux->venda_ver.dia, aux->venda_ver.hora, aux->venda_ver.minutos, aux->venda_ver.segundos);
-        printf("\n");
+        if (aux->venda.tipo == 0) { 
+            encontrou = 1; 
+            printf("#####################################\n");
+            printf("Código: %d\n", aux->venda.codigo);
+            printf("Marca: %s\n", aux->venda.marca);
+            printf("Preço: %.2f\n", aux->venda.preco);
+            printf("Data atual: %04d-%02d-%02d às %02d:%02d:%02d\n", aux->venda.ano, aux->venda.mes, aux->venda.dia, aux->venda.hora, aux->venda.minutos, aux->venda.segundos);
+            printf("\n");
+        }
         aux = aux->proximo;
     }
-    if (aux == NULL) {
-        printf("Não há vendas registradas\n");
+    if (!encontrou) {
+        printf("Não há vendas de óculos de ver registradas\n");
     }
-    
 }
 
-void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol, int *id) {
+void Vender_oculos(NodeOculos *lista, NodeVenda **lista2, Venda venda, int tipo) {
     int codigo;
     int dia, mes, ano, hora, minutos, segundos;
-    Node2 *aux = lista2;
-    printf("Digite o código do oculos de ver: ");
+    NodeOculos *aux = lista;
+    if (tipo == 1) {
+        printf("Digite o código do óculos de sol: ");
+    } else if (tipo == 0) {
+        printf("Digite o código do óculos de ver: ");
+    } else {
+        printf("Tipo de óculos inválido\n");
+        return;
+    }
     scanf("%d", &codigo);
     while (aux != NULL) {
-        if (aux->oculos_sol.codigo == codigo) {
-            if (aux->oculos_sol.quantidade > 0) {
+        if (aux->oculos.codigo == codigo) {
+            if (aux->oculos.quantidade > 0) {
                 printf("Venda realizada com sucesso\n");
-                Node4 *novo = (Node4 *) malloc(sizeof(Node4));
-                (*id)++;
+                horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
+                venda.dia = dia;
+                venda.mes = mes;
+                venda.ano = ano;
+                venda.hora = hora;
+                venda.minutos = minutos;
+                venda.segundos = segundos;
+                venda.codigo = aux->oculos.codigo;
+                strcpy(venda.marca, aux->oculos.marca);
+                venda.preco = aux->oculos.preco;
+                venda.tipo = aux->oculos.tipo;
+                NodeVenda *novo = (NodeVenda *)malloc(sizeof(NodeVenda));
                 if (novo == NULL) {
-                    printf("Erro ao alocar memória para Node3\n");
+                    printf("Erro ao alocar memória para Node\n");
                     return;
                 }
-                horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
-                novo->venda_sol = venda_sol;
-                novo->venda_sol.dia = dia;  
-                novo->venda_sol.mes = mes;
-                novo->venda_sol.ano = ano;
-                novo->venda_sol.hora = hora;
-                novo->venda_sol.minutos = minutos;
-                novo->venda_sol.segundos = segundos;
-                novo->venda_sol.id = *id;
+                novo->venda = venda;
                 novo->proximo = NULL;
                 novo->anterior = NULL;
-                if (*lista4 == NULL) {
-                    *lista4 = novo;
+                if (*lista2 == NULL) {
+                    *lista2 = novo;
                 } else {
-                    Node4 *aux2 = *lista4;
+                    NodeVenda *aux2 = *lista2;
                     while (aux2->proximo != NULL) {
                         aux2 = aux2->proximo;
                     }
                     aux2->proximo = novo;
                     novo->anterior = aux2;
                 }
-                aux->oculos_sol.quantidade -= 1;
+                aux->oculos.quantidade -= 1;
                 return;
             } else {
-                printf("Não há oculos suficiente no estoque\n");
+                printf("Não há óculos suficientes no estoque\n");
                 return;
             }
         }
@@ -377,181 +156,124 @@ void Vender_oculos_sol(Node2 *lista2, Node4 **lista4, Venda_sol venda_sol, int *
     printf("Código não encontrado\n");
 }
 
-void Vender_oculos_ver(Node *lista, Node3 **lista3, Venda_ver venda_ver, int *id) {
-    int codigo;
-    int dia, mes, ano, hora, minutos, segundos;
-    Node *aux = lista;
-    printf("Digite o código do oculos de ver: ");
-    scanf("%d", &codigo);
+
+void listar_oculos_sol(NodeOculos *lista) {
+    NodeOculos *aux = lista;
     while (aux != NULL) {
-        if (aux->oculos_ver.codigo == codigo) {
-            if (aux->oculos_ver.quantidade > 0) {
-                printf("Venda realizada com sucesso\n");
-                Node3 *novo = (Node3 *) malloc(sizeof(Node3));
-                (*id)++;
-                if (novo == NULL) {
-                    printf("Erro ao alocar memória para Node3\n");
-                    return;
+        if (aux->oculos.tipo == 1) {
+            printf("#####################################\n");
+            printf("Código: %d\n", aux->oculos.codigo);
+            printf("Marca: %s\n", aux->oculos.marca);
+            printf("Preço: %.2f\n", aux->oculos.preco);
+            printf("Quantidade: %d\n", aux->oculos.quantidade);
+        }
+        aux = aux->proximo;
+    }
+}
+
+void listar_oculos_ver(NodeOculos *lista) {
+    NodeOculos *aux = lista;
+    while (aux != NULL) {
+        if (aux->oculos.tipo == 0) {
+            printf("#####################################\n");
+            printf("Código: %d\n", aux->oculos.codigo);
+            printf("Marca: %s\n", aux->oculos.marca);
+            printf("Preço: %.2f\n", aux->oculos.preco);
+            printf("Quantidade: %d\n", aux->oculos.quantidade);
+        }
+        aux = aux->proximo;
+    }
+}
+
+void listar_codigos_por_marcas_sol(int opcao, NodeOculos *lista) {
+    NodeOculos *aux = lista;
+    while (aux != NULL) {
+        if (aux->oculos.tipo == 1) {
+            if (opcao == 1) {
+                if (stricmp(aux->oculos.marca, "Rayban") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
                 }
-                horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
-                novo->venda_ver = venda_ver;
-                novo->venda_ver.dia = dia;  
-                novo->venda_ver.mes = mes;
-                novo->venda_ver.ano = ano;
-                novo->venda_ver.hora = hora;
-                novo->venda_ver.minutos = minutos;
-                novo->venda_ver.segundos = segundos;
-                novo->venda_ver.id = *id;
-                novo->proximo = NULL;
-                novo->anterior = NULL;
-                if (*lista3 == NULL) {
-                    *lista3 = novo;
-                } else {
-                    Node3 *aux2 = *lista3;
-                    while (aux2->proximo != NULL) {
-                        aux2 = aux2->proximo;
-                    }
-                    aux2->proximo = novo;
-                    novo->anterior = aux2;
+            } else if (opcao == 2) {
+                if (stricmp(aux->oculos.marca, "Prada") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
                 }
-                aux->oculos_ver.quantidade -= 1;
-                return;
+            } else if (opcao == 3) {
+                if (stricmp(aux->oculos.marca, "Gucci") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 4) {
+                if (stricmp(aux->oculos.marca, "Oakley") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 5) {
+                if (stricmp(aux->oculos.marca, "Vogue") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
             } else {
-                printf("Não há oculos suficiente no estoque\n");
-                return;
+                printf("Opção inválida\n");
             }
         }
         aux = aux->proximo;
     }
-    printf("Código não encontrado\n");
 }
 
-void listar_oculos_sol(Node2 *lista2){
-    Node2 *aux = lista2;
-    while(aux != NULL){
-        printf("#####################################\n");
-        printf("Código: %d\n", aux->oculos_sol.codigo);
-        printf("Marca: %s\n", aux->oculos_sol.marca);
-        printf("Preço: %.2f\n", aux->oculos_sol.preco);
-        printf("Quantidade: %d\n", aux->oculos_sol.quantidade);
-        aux = aux->proximo;
-    }
-}
-
-void listar_oculos_ver(Node *lista){
-    Node *aux = lista;
-    while(aux != NULL){
-        printf("#####################################\n");
-        printf("Código: %d\n", aux->oculos_ver.codigo);
-        printf("Marca: %s\n", aux->oculos_ver.marca);
-        printf("Preço: %.2f\n", aux->oculos_ver.preco);
-        printf("Quantidade: %d\n", aux->oculos_ver.quantidade);
-        aux = aux->proximo;
-    }
-}
-
-void listar_codigos_por_marcas_sol(int opcao, Node2 *lista2) {
-    Node2 *aux = lista2;
+void listar_codigos_por_marcas(int opcao, NodeOculos *lista) {
+    NodeOculos *aux = lista;
     while (aux != NULL) {
-        if(opcao == 1){
-            if (stricmp(aux->oculos_sol.marca, "Rayban") == 0) {
-                printf("Código: %d\n", aux->oculos_sol.codigo);
+        if (aux->oculos.tipo == 0) {
+            if (opcao == 1) {
+                if (stricmp(aux->oculos.marca, "Rayban") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 2) {
+                if (stricmp(aux->oculos.marca, "Prada") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 3) {
+                if (stricmp(aux->oculos.marca, "Gucci") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 4) {
+                if (stricmp(aux->oculos.marca, "Oakley") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else if (opcao == 5) {
+                if (stricmp(aux->oculos.marca, "Vogue") == 0) {
+                    printf("Código: %d\n", aux->oculos.codigo);
+                }
+            } else {
+                printf("Opção inválida\n");
             }
-            aux = aux->proximo;
-        }
-        else if(opcao == 2){
-            if (stricmp(aux->oculos_sol.marca, "Prada") == 0) {
-                printf("Código: %d\n", aux->oculos_sol.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 3){
-            if (stricmp(aux->oculos_sol.marca, "Gucci") == 0) {
-                printf("Código: %d\n", aux->oculos_sol.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 4){
-            if (stricmp(aux->oculos_sol.marca, "Oakley") == 0) {
-                printf("Código: %d\n", aux->oculos_sol.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 5){
-            if (stricmp(aux->oculos_sol.marca, "Vogue") == 0) {
-                printf("Código: %d\n", aux->oculos_sol.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else{
-            printf("Opção inválida\n");
-        }
-    }
-}
-
-void listar_codigos_por_marcas(int opcao, Node *lista) {
-    Node *aux = lista;
-    while (aux != NULL) {
-        if(opcao == 1){
-            if (stricmp(aux->oculos_ver.marca, "Rayban") == 0) {
-                printf("Código: %d\n", aux->oculos_ver.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 2){
-            if (stricmp(aux->oculos_ver.marca, "Prada") == 0) {
-                printf("Código: %d\n", aux->oculos_ver.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 3){
-            if (stricmp(aux->oculos_ver.marca, "Gucci") == 0) {
-                printf("Código: %d\n", aux->oculos_ver.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 4){
-            if (stricmp(aux->oculos_ver.marca, "Oakley") == 0) {
-                printf("Código: %d\n", aux->oculos_ver.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else if(opcao == 5){
-            if (stricmp(aux->oculos_ver.marca, "Vogue") == 0) {
-                printf("Código: %d\n", aux->oculos_ver.codigo);
-            }
-            aux = aux->proximo;
-        }
-        else{
-            printf("Opção inválida\n");
-        }
-    }
-}
-
-int codigo_ja_existe2(Node2 *lista2, int novo_codigo) {
-    Node2 *aux = lista2;
-    while (aux != NULL) {
-        if (aux->oculos_sol.codigo == novo_codigo) {
-            return 1; 
         }
         aux = aux->proximo;
     }
-    return 0; 
 }
 
-void oculos_sol(Oculos_sol *oculos_sol) {
-    printf("Digite o código do oculos de ver: ");
-    scanf("%d", &oculos_sol->codigo);
-    printf("Digite a marca do oculos de ver: ");
-    scanf("%s", oculos_sol->marca);
-    printf("Digite o preço do oculos de ver: ");
-    scanf("%f", &oculos_sol->preco);
-    printf("Digite a quantidade do oculos de ver: ");
-    scanf("%d", &oculos_sol->quantidade);
+int codigo_ja_existe(NodeOculos *lista, int novo_codigo) {
+    NodeOculos *aux = lista;
+    while (aux != NULL) {
+        if (aux->oculos.codigo == novo_codigo) {
+            return 1;
+        }
+        aux = aux->proximo;
+    }
+    return 0;
 }
 
-void inserir_oculos_sol(Node2 **lista2, Oculos_sol oculos_sol) {
-    if (codigo_ja_existe2(*lista2, oculos_sol.codigo)) {
+void oculos_sol(Oculos *oculos) {
+    printf("Digite o código do óculos de sol: ");
+    scanf("%d", &oculos->codigo);
+    printf("Digite a marca do óculos de sol: ");
+    scanf("%s", oculos->marca);
+    printf("Digite o preço do óculos de sol: ");
+    scanf("%f", &oculos->preco);
+    printf("Digite a quantidade do óculos de sol: ");
+    scanf("%d", &oculos->quantidade);
+    oculos->tipo = 1;
+}
+
+void inserir_oculos(NodeOculos **lista, Oculos oculos) {
+    if (codigo_ja_existe(*lista, oculos.codigo)) {
         int opcao;
         printf("Código já existe na lista. Não é possível inserir.\n");
         printf("Deseja adicionar à mercadoria já existente ou repetir?\n");
@@ -559,10 +281,10 @@ void inserir_oculos_sol(Node2 **lista2, Oculos_sol oculos_sol) {
         printf("2 - Repetir\n");
         scanf("%d", &opcao);
         if (opcao == 1) {
-            Node2 *aux = *lista2;
+            NodeOculos *aux = *lista;
             while (aux != NULL) {
-                if (aux->oculos_sol.codigo == oculos_sol.codigo) {
-                    aux->oculos_sol.quantidade += oculos_sol.quantidade;
+                if (aux->oculos.codigo == oculos.codigo) {
+                    aux->oculos.quantidade += oculos.quantidade;
                     break;
                 }
                 aux = aux->proximo;
@@ -570,79 +292,15 @@ void inserir_oculos_sol(Node2 **lista2, Oculos_sol oculos_sol) {
         } else {
             return;
         }
-    }
-    else{
-        Node2 *novo = (Node2 *) malloc(sizeof(Node2));
-        novo->oculos_sol = oculos_sol;
+    } else {
+        NodeOculos *novo = (NodeOculos *)malloc(sizeof(NodeOculos));
+        novo->oculos = oculos;
         novo->proximo = NULL;
         novo->anterior = NULL;
-        
-        if (*lista2 == NULL) {
-            *lista2 = novo;
-        } else {
-            Node2 *aux = *lista2;
-            while (aux->proximo != NULL) {
-                aux = aux->proximo;
-            }
-            aux->proximo = novo;
-            novo->anterior = aux;
-        }
-    }
-}
-
-int codigo_ja_existe(Node *lista, int novo_codigo) {
-    Node *aux = lista;
-    while (aux != NULL) {
-        if (aux->oculos_ver.codigo == novo_codigo) {
-            return 1; 
-        }
-        aux = aux->proximo;
-    }
-    return 0; 
-}
-
-void oculos_ver(Oculos_ver *oculos_ver) {
-    printf("Digite o código do oculos de ver: ");
-    scanf("%d", &oculos_ver->codigo);
-    printf("Digite a marca do oculos de ver: ");
-    scanf("%s", oculos_ver->marca);
-    printf("Digite o preço do oculos de ver: ");
-    scanf("%f", &oculos_ver->preco);
-    printf("Digite a quantidade do oculos de ver: ");
-    scanf("%d", &oculos_ver->quantidade);
-}
-
-void inserir_oculos_ver(Node **lista, Oculos_ver oculos_ver) {
-    if (codigo_ja_existe(*lista, oculos_ver.codigo)) {
-        int opcao;
-        printf("Código já existe na lista. Não é possível inserir.\n");
-        printf("Deseja adicionar à mercadoria já existente ou repetir?\n");
-        printf("1 - Adicionar à mercadoria já existente\n");
-        printf("2 - Repetir\n");
-        scanf("%d", &opcao);
-        if (opcao == 1) {
-            Node *aux = *lista;
-            while (aux != NULL) {
-                if (aux->oculos_ver.codigo == oculos_ver.codigo) {
-                    aux->oculos_ver.quantidade += oculos_ver.quantidade;
-                    break;
-                }
-                aux = aux->proximo;
-            }
-        } else {
-            return;
-        }
-    }
-    else{
-        Node *novo = (Node *) malloc(sizeof(Node));
-        novo->oculos_ver = oculos_ver;
-        novo->proximo = NULL;
-        novo->anterior = NULL;
-        
         if (*lista == NULL) {
             *lista = novo;
         } else {
-            Node *aux = *lista;
+            NodeOculos *aux = *lista;
             while (aux->proximo != NULL) {
                 aux = aux->proximo;
             }
@@ -652,9 +310,20 @@ void inserir_oculos_ver(Node **lista, Oculos_ver oculos_ver) {
     }
 }
 
+void oculos_ver(Oculos *oculos) {
+    printf("Digite o código do óculos de ver: ");
+    scanf("%d", &oculos->codigo);
+    printf("Digite a marca do óculos de ver: ");
+    scanf("%s", oculos->marca);
+    printf("Digite o preço do óculos de ver: ");
+    scanf("%f", &oculos->preco);
+    printf("Digite a quantidade do óculos de ver: ");
+    scanf("%d", &oculos->quantidade);
+    oculos->tipo = 0;
+}
 
 //Menus
-void menu_excluir(int *opcao){
+void menu_excluir(int *opcao) {
     printf("                            1 - Excluir oculos de ver\n");
     printf("                            2 - Excluir oculos de sol\n");
     printf("                            3 - Venda\n");
@@ -663,7 +332,7 @@ void menu_excluir(int *opcao){
     scanf("%d", opcao);
 }
 
-void menu_consultar(int *opcao){
+void menu_consultar(int *opcao) {
     printf("                            1 - Consultar oculos de ver\n");
     printf("                            2 - Consultar oculos de sol\n");
     printf("                            3 - Consultar vendas do dia\n");
@@ -675,7 +344,7 @@ void menu_consultar(int *opcao){
     scanf("%d", opcao);
 }
 
-void menu_vender(int *opcao){
+void menu_vender(int *opcao) {
     printf("                            1 - Vender oculos de ver\n");
     printf("                            2 - Vender oculos de sol\n");
     printf("                            0 - Sair\n");
@@ -683,7 +352,7 @@ void menu_vender(int *opcao){
     scanf("%d", opcao);
 }
 
-void menu_vendas(int *opcao){
+void menu_vendas(int *opcao) {
     printf("                            1 - Vender oculos \n");
     printf("                            2 - Consultar vendas\n");
     printf("                            0 - Sair\n");
@@ -691,7 +360,7 @@ void menu_vendas(int *opcao){
     scanf("%d", opcao);
 }
 
-void menu_listar(int *opcao){
+void menu_listar(int *opcao) {
     printf("                            1 - Listar oculos de ver\n");
     printf("                            2 - Listar oculos de sol\n");
     printf("                            0 - Sair\n");
@@ -746,58 +415,52 @@ void menu(int *opcao) {
     scanf("%d", opcao);
 }
 
-int main() {    
+int main() {
     setlocale(LC_ALL, "");
-    Node *lista = NULL;
-    Node2 *lista2 = NULL;
-    Node3 *lista3 = NULL;
-    Node4 *lista4 = NULL;
-    int id = 0;
-    
-    int opcao = 1;  // Defina um valor inicial diferente de 0 para entrar no loop
-
-    while (opcao != -1) {  // O loop continuará até que o usuário escolha sair (opção 0)
+    NodeOculos *lista_oculos = NULL;
+    NodeVenda *lista_vendas = NULL;
+    Venda venda;
+    int opcao = 1; 
+    while (opcao != 0) { 
         menu(&opcao);
         switch (opcao) {
             case 1:
                 menu_oculos_ver(&opcao);
-                listar_codigos_por_marcas(opcao, lista);
+                listar_codigos_por_marcas(opcao, lista_oculos);
                 break;
             case 2:
                 menu_oculos_sol(&opcao);
-                listar_codigos_por_marcas_sol(opcao, lista2);
+                listar_codigos_por_marcas_sol(opcao, lista_oculos);
                 break;
             case 3:
                 menu_inserir(&opcao);
                 switch (opcao) {
                     case 1: {
-                        Oculos_ver newOculos;
-                        oculos_ver(&newOculos);
-                        inserir_oculos_ver(&lista, newOculos);
+                        Oculos oculos;
+                        oculos_ver(&oculos);
+                        inserir_oculos(&lista_oculos, oculos);
                     }
-                    break;
+                        break;
                     case 2: {
-                        Oculos_sol newOculos;
-                        oculos_sol(&newOculos);
-                        inserir_oculos_sol(&lista2, newOculos);
+                        Oculos oculos;
+                        oculos_sol(&oculos);
+                        inserir_oculos(&lista_oculos, oculos);
                     }
-                    break;
+                        break;
                     case 0:
-                        break;                    
+                        break;
                     default:
                         break;
                 }
                 break;
             case 4:
                 menu_listar(&opcao);
-                switch (opcao)
-                {
+                switch (opcao) {
                     case 1:
-                        listar_oculos_ver(lista);
+                        listar_oculos_ver(lista_oculos);
                         break;
-                        
                     case 2:
-                        listar_oculos_sol(lista2);
+                        listar_oculos_sol(lista_oculos);
                         break;
                     case 0:
                         break;
@@ -807,21 +470,16 @@ int main() {
                 break;
             case 5:
                 menu_vendas(&opcao);
-                switch (opcao)
-                {
+                switch (opcao) {
                     case 1:
                         menu_vender(&opcao);
-                        switch (opcao)
-                        {
-                            case 1:{
-                                Venda_ver venda;
-                                Vender_oculos_ver(lista, &lista3, venda, &id);
-                            }
+                        switch (opcao) {
+                            case 1:
+                                Vender_oculos(lista_oculos, &lista_vendas, venda, 0);
                                 break;
-                            case 2:{
-                                Venda_sol venda2;
-                                Vender_oculos_sol(lista2, &lista4, venda2, &id);  
-                            }
+                            case 2:
+                                Vender_oculos(lista_oculos, &lista_vendas, venda, 1);
+                                break;
                             case 0:
                                 break;
                             default:
@@ -830,50 +488,38 @@ int main() {
                         break;
                     case 2:
                         menu_consultar(&opcao);
-                            switch (opcao)
-                            {
-                            case 1:
-                                listar_vendas_ver(lista3);
+                        switch (opcao) {
+                            case 1:{
+                                Venda venda;
+                                listar_vendas_ver(lista_vendas);
+                            }
                                 break;
-                            case 2:
-                                listar_vendas_sol(lista4);
-                                break;                    
-                            case 3:
-                                listar_vendas_dia(lista3, lista4);
-                                break;        
-                            case 4:
-                                listar_vendas_mes(lista3, lista4);
-                                break;
-                            case 5:
-                                listar_vendas_ano(lista3, lista4);
-                                break;
-                            case 6:
-                                listar_vendas_data(lista3, lista4);
-                                break;
+                            case 2:{
+                                Venda venda;
+                                listar_vendas_sol(lista_vendas);
+                            }break;
                             case 0:
                                 break;
                             default:
                                 break;
-                            }                        
-                        break;     
+                        }
                     case 0:
-                        break;  
+                        break;
                     default:
                         break;
                 }
                 break;
             case 6:
                 menu_excluir(&opcao);
-                switch (opcao)
-                {
+                switch (opcao) {
                     case 1:
-                        excluir_oculos_ver(&lista);
+                        // Implemente a funcionalidade de exclusão de óculos de ver.
                         break;
                     case 2:
-                        excluir_oculos_sol(&lista2);
+                        // Implemente a funcionalidade de exclusão de óculos de sol.
                         break;
                     case 3:
-                        //excluir_venda(&lista3, &lista4);
+                        // Implemente a funcionalidade de venda.
                         break;
                     case 0:
                         break;
@@ -882,18 +528,15 @@ int main() {
                 }
                 break;
             case 7:
-                // Implemente a funcionalidade de ficha de cliente
+                // Implemente a funcionalidade de ficha de cliente.
                 break;
             case 0:
-                printf("Obrigado por usar o programa!\n");
                 break;
             default:
                 break;
         }
     }
 
-    // Libere a memória alocada para a lista de óculos antes de sair
-    // ...
-    
     return 0;
 }
+
