@@ -65,6 +65,7 @@ void listar_vendas_sol(NodeVenda *lista) {
         if (aux->venda.tipo == 1) { 
             encontrou = 1; 
             printf("#####################################\n");
+            printf("ID: %d\n", aux->venda.id);
             printf("Código: %d\n", aux->venda.codigo);
             printf("Marca: %s\n", aux->venda.marca);
             printf("Preço: %.2f\n", aux->venda.preco);
@@ -85,6 +86,7 @@ void listar_vendas_ver(NodeVenda *lista) {
         if (aux->venda.tipo == 0) { 
             encontrou = 1; 
             printf("#####################################\n");
+            printf("ID: %d\n", aux->venda.id);
             printf("Código: %d\n", aux->venda.codigo);
             printf("Marca: %s\n", aux->venda.marca);
             printf("Preço: %.2f\n", aux->venda.preco);
@@ -98,7 +100,7 @@ void listar_vendas_ver(NodeVenda *lista) {
     }
 }
 
-void Vender_oculos(NodeOculos *lista, NodeVenda **lista2, Venda venda, int tipo) {
+void Vender_oculos(NodeOculos *lista, NodeVenda **lista2, Venda venda, int tipo, int *id) {
     int codigo;
     int dia, mes, ano, hora, minutos, segundos;
     NodeOculos *aux = lista;
@@ -114,6 +116,7 @@ void Vender_oculos(NodeOculos *lista, NodeVenda **lista2, Venda venda, int tipo)
     while (aux != NULL) {
         if (aux->oculos.codigo == codigo) {
             if (aux->oculos.quantidade > 0) {
+                (*id) += 1;
                 printf("Venda realizada com sucesso\n");
                 horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
                 venda.dia = dia;
@@ -122,6 +125,7 @@ void Vender_oculos(NodeOculos *lista, NodeVenda **lista2, Venda venda, int tipo)
                 venda.hora = hora;
                 venda.minutos = minutos;
                 venda.segundos = segundos;
+                venda.id = *id;
                 venda.codigo = aux->oculos.codigo;
                 strcpy(venda.marca, aux->oculos.marca);
                 venda.preco = aux->oculos.preco;
@@ -420,6 +424,7 @@ int main() {
     NodeOculos *lista_oculos = NULL;
     NodeVenda *lista_vendas = NULL;
     Venda venda;
+    int id = 0;
     int opcao = 1; 
     while (opcao != 0) { 
         menu(&opcao);
@@ -475,10 +480,10 @@ int main() {
                         menu_vender(&opcao);
                         switch (opcao) {
                             case 1:
-                                Vender_oculos(lista_oculos, &lista_vendas, venda, 0);
+                                Vender_oculos(lista_oculos, &lista_vendas, venda, 0, &id);
                                 break;
                             case 2:
-                                Vender_oculos(lista_oculos, &lista_vendas, venda, 1);
+                                Vender_oculos(lista_oculos, &lista_vendas, venda, 1, &id);
                                 break;
                             case 0:
                                 break;
@@ -536,7 +541,5 @@ int main() {
                 break;
         }
     }
-
     return 0;
 }
-
