@@ -58,6 +58,29 @@ void horas_atuais(int *dia, int *mes, int *ano, int *hora, int *minutos, int *se
     *segundos = localTime->tm_sec;
 }
 
+void listar_vendas_dia(NodeVenda *lista){
+    NodeVenda *aux = lista;
+    int encontrou = 0; 
+    int dia, mes, ano, hora, minutos, segundos;
+    horas_atuais(&dia, &mes, &ano, &hora, &minutos, &segundos);
+    while (aux != NULL) {
+        if (aux->venda.dia == dia && aux->venda.mes == mes && aux->venda.ano == ano) { 
+            encontrou = 1; 
+            printf("#####################################\n");
+            printf("ID: %d\n", aux->venda.id);
+            printf("Código: %d\n", aux->venda.codigo);
+            printf("Marca: %s\n", aux->venda.marca);
+            printf("Preço: %.2f\n", aux->venda.preco);
+            printf("Data atual: %04d-%02d-%02d às %02d:%02d:%02d\n", aux->venda.ano, aux->venda.mes, aux->venda.dia, aux->venda.hora, aux->venda.minutos, aux->venda.segundos);
+            printf("\n");
+        }
+        aux = aux->proximo;
+    }
+    if (!encontrou) {
+        printf("Não há vendas registradas\n");
+    }
+}
+
 void listar_vendas_sol(NodeVenda *lista) {
     NodeVenda *aux = lista;
     int encontrou = 0; 
@@ -503,6 +526,17 @@ int main() {
                                 Venda venda;
                                 listar_vendas_sol(lista_vendas);
                             }break;
+                            case 3:{
+                                Venda venda;
+                                listar_vendas_dia(lista_vendas);
+                            }
+                                break;
+                            case 4:
+                                {
+                                Venda venda;
+                                //listar_vendas_mes(lista_vendas);
+                            }
+                                break;
                             case 0:
                                 break;
                             default:
@@ -543,3 +577,4 @@ int main() {
     }
     return 0;
 }
+
