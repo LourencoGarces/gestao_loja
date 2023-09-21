@@ -58,6 +58,107 @@ void horas_atuais(int *dia, int *mes, int *ano, int *hora, int *minutos, int *se
     *segundos = localTime->tm_sec;
 }
 
+void excluir_vendas(NodeVenda** lista, int *id) {
+    NodeVenda* aux = *lista;
+    int encontrou = 0;
+    int cod;
+    printf("Digite o ID da venda a ser excluída: ");
+    scanf("%d", &cod);
+    while (aux != NULL) {
+        if (aux->venda.id == cod) {
+            encontrou = 1;
+            if (aux->anterior == NULL) {
+                *lista = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = NULL;
+                }
+            } else {
+                aux->anterior->proximo = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = aux->anterior;
+                }
+            }
+            free(aux);
+            (*id)--;
+            printf("Venda excluída com sucesso\n");
+            NodeVenda* aux2 = *lista;
+            int novoID = 1;
+            while (aux2 != NULL) {
+                aux2->venda.id = novoID++;
+                aux2 = aux2->proximo;
+            }
+            return;
+        }
+        aux = aux->proximo;
+    }
+    if (!encontrou) {
+        printf("Venda com o ID %d não encontrada\n", cod);
+    }
+}
+
+void excluir_oculos_sol(NodeOculos **lista){
+    NodeOculos *aux = *lista;
+    int encontrou = 0;
+    int codigo;
+    printf("Digite o código do óculos de sol: ");
+    scanf("%d", &codigo);
+    while (aux != NULL) {
+        if (aux->oculos.codigo == codigo && aux->oculos.tipo == 1) { 
+            encontrou = 1; 
+            if (aux->anterior == NULL) {
+                *lista = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = NULL;
+                }
+            } else {
+                aux->anterior->proximo = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = aux->anterior;
+                }
+            }
+            free(aux);
+            printf("Óculos de sol excluído com sucesso\n");
+            return;
+        }
+        aux = aux->proximo;
+    }
+    if (!encontrou) {
+        printf("Código não encontrado\n");
+    }
+
+}
+
+void excluir_oculos_ver(NodeOculos **lista){
+    NodeOculos *aux = *lista;
+    int encontrou = 0;
+    int codigo;
+    printf("Digite o código do óculos de ver: ");
+    scanf("%d", &codigo);
+    while (aux != NULL) {
+        if (aux->oculos.codigo == codigo && aux->oculos.tipo == 0) { 
+            encontrou = 1; 
+            if (aux->anterior == NULL) {
+                *lista = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = NULL;
+                }
+            } else {
+                aux->anterior->proximo = aux->proximo;
+                if (aux->proximo != NULL) {
+                    aux->proximo->anterior = aux->anterior;
+                }
+            }
+            free(aux);
+            printf("Óculos de ver excluído com sucesso\n");
+            return;
+        }
+        aux = aux->proximo;
+    }
+    if (!encontrou) {
+        printf("Código não encontrado\n");
+    }
+}
+
 void listar_vendas_data(NodeVenda *lista){
     NodeVenda *aux = lista;
     int encontrou = 0;
@@ -633,13 +734,13 @@ int main() {
                 menu_excluir(&opcao);
                 switch (opcao) {
                     case 1:
-                        // Implemente a funcionalidade de exclusão de óculos de ver.
+                        excluir_oculos_ver(&lista_oculos);
                         break;
                     case 2:
-                        // Implemente a funcionalidade de exclusão de óculos de sol.
+                        excluir_oculos_sol(&lista_oculos);
                         break;
                     case 3:
-                        // Implemente a funcionalidade de venda.
+                        excluir_vendas(&lista_vendas, &id);
                         break;
                     case 0:
                         break;
